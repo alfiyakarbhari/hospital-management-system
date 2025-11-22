@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-md-5">
+    <div class="card p-3 shadow-sm">
+      <h5>Book Appointment</h5>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Patient</label>
+          <select name="patient_id" class="form-select" required>
+            <option value="">-- select patient --</option>
+            {% for pt in patients %}
+              <option value="{{ pt.id }}">{{ pt.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Date & time</label>
+          <input name="appointment_datetime" type="datetime-local" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Doctor (optional)</label>
+          <input name="doctor" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Notes (optional)</label>
+          <textarea name="notes" class="form-control"></textarea>
+        </div>
+        <button class="btn btn-success">Book</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <h5>Appointments</h5>
+    <table class="table table-sm mt-2">
+      <thead>
+        <tr><th>#</th><th>Patient</th><th>Date & Time</th><th>Doctor</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for ap in appointments %}
+          <tr>
+            <td>{{ ap.id }}</td>
+            <td>{{ ap.patient_name }}</td>
+            <td>{{ ap.appointment_datetime }}</td>
+            <td>{{ ap.doctor }}</td>
+            <td>{{ ap.status }}</td>
+            <td>
+              {% if ap.status == 'booked' %}
+                <form method="post" action="{{ url_for('cancel_appointment', appointment_id=ap.id) }}" style="display:inline;">
+                  <button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm('Cancel this appointment?')">Cancel</button>
+                </form>
+              {% else %}
+                <span class="text-muted small">Cancelled</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-center">No appointments yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
